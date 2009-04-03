@@ -5,52 +5,53 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "dm-abstract-rest-adapter"
-    gem.summary = %Q{TODO}
+    gem.summary = "An Adapter for DataMapper that handles the HTTP parts of a Restful Adapter. Can be used as a base for your own custom opinionated adapter."
     gem.email = "psadauskas@gmail.com"
     gem.homepage = "http://github.com/paul/dm-abstract-rest-adapter"
     gem.authors = ["Paul Sadauskas"]
 
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+    gem.add_runtime_dependency 'dm-core', '>= 0.10.0'
+    gem.add_runtime_dependency 'resourceful', '>= 0.5.0'
+
+    %w{rspec yard jeweler}.each do |dep|
+      gem.add_development_dependency dep
+    end
+
   end
 rescue LoadError
   puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
 end
 
-require 'rake/testtask'
-Rake::TestTask.new(:test) do |test|
-  test.libs << 'lib' << 'test'
-  test.pattern = 'test/**/*_test.rb'
-  test.verbose = false
+
+begin
+  require 'spec/rake/spectask'
+  
+  desc 'Run all specs'
+  Spec::Rake::SpecTask.new(:spec) do |t|
+    t.spec_opts << '--options' << 'spec/spec.opts' if File.exists?('spec/spec.opts')
+    t.libs << 'lib'
+    t.spec_files = FileList['spec/**_spec.rb'] 
+  end
+
+  desc 'Default: Run Specs'
+  task :default => :spec
+
+  desc 'Run all tests'
+  task :test => :spec
+
+rescue LoadError
+  puts "Please install rspec gem to run specs"
 end
 
 begin
-  require 'rcov/rcovtask'
-  Rcov::RcovTask.new do |test|
-    test.libs << 'test'
-    test.pattern = 'test/**/*_test.rb'
-    test.verbose = true
+  require 'yard'
+
+  desc "Generate Yardoc"
+  YARD::Rake::YardocTask.new do |t|
+    t.files = ['lib/**/*.rb', 'README.markdown']
   end
+
 rescue LoadError
-  task :rcov do
-    abort "RCov is not available. In order to run rcov, you must: sudo gem install spicycode-rcov"
-  end
-end
-
-
-task :default => :test
-
-require 'rake/rdoctask'
-Rake::RDocTask.new do |rdoc|
-  if File.exist?('VERSION.yml')
-    config = YAML.load(File.read('VERSION.yml'))
-    version = "#{config[:major]}.#{config[:minor]}.#{config[:patch]}"
-  else
-    version = ""
-  end
-
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "dm-abstract-rest-adapter #{version}"
-  rdoc.rdoc_files.include('README*')
-  rdoc.rdoc_files.include('lib/**/*.rb')
+  puts "Please install yard gem to run doc generation"
 end
 
