@@ -1,0 +1,7 @@
+= dm-abstract-rest-adapter
+
+Description goes here.
+
+== Copyright
+
+Copyright (c) 2009 Paul Sadauskas. See LICENSE for details.
